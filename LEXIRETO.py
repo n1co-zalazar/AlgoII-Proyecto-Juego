@@ -328,6 +328,7 @@ def main():
                     for i, poligono in enumerate(hexagonos):
                         if punto_en_poligono(mx, my, poligono):
                             seleccionados.append(LETRAS[i])
+<<<<<<< HEAD
             elif evento.type == pygame.MOUSEWHEEL:
                 scroll_offset -= evento.y * 30  #sensibilidad del scroll
                 scroll_offset = max(0, scroll_offset)
@@ -357,3 +358,6 @@ def main():
     sys.exit()
 
 main()
+=======
+pygame.display.quit
+>>>>>>> 8efdb81d7d069fe4aeed1294f723f5cda2f9fe43

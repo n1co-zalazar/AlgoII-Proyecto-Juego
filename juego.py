@@ -59,10 +59,35 @@ class Juego:
         for eventos in pygame.event.get():
             if eventos.type == pygame.QUIT:
                 self.run, self.play = False, False
-
             if eventos.type == pygame.MOUSEBUTTONDOWN and eventos.button == 1:
-                print("Hiciste clic con el mouse en ", self.mouse_posicion)
+                mouse_pos = pygame.mouse.get_pos()
+                for boton in self.botones:
+                    if boton.clic(mouse_pos):
+                        if boton.texto == 'Lexireto':
+                            self.ejecutar_lexireto()
+                        elif boton.texto == 'Letras':
+                            self.ejecutar_letras()
+                        elif boton.texto == 'Salir':
+                            self.run, self.play = False, False
+                            pygame.quit()
+                            quit()
 
+    def ejecutar_lexireto(self):
+        """Ejecuta el juego Lexireto"""
+        self.play = False  # Pausamos el menú principal
+        LEXIRETO.main()  # Ejecutamos Lexireto
+        self.play = True  # Volvemos al menú principal al terminar
+        # Restablecemos la pantalla
+        self.ventana = pygame.display.set_mode((self.Ancho, self.Largo))
+
+    def ejecutar_letras(self):
+        """Ejecuta el juego Letras"""
+        self.play = False  # Pausamos el menú principal
+        LETRAS.jugar_sopa_letras()  # Ejecutamos Letras
+        self.play = True  # Volvemos al menú principal al terminar
+        # Restablecemos la pantalla
+        self.ventana = pygame.display.set_mode((self.Ancho, self.Largo))
+        
     def crea_titulo(self,letra, nombrejuego, colorsombra, colortitulo, posicionsombra, posiciontitulo):
         fuente_titulo = pygame.font.SysFont(letra, const.tamano_letra_titulo)
 
