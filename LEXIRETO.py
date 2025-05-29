@@ -14,7 +14,7 @@ NEGRO = (0,0,0)
 AMARILLO = (255,204,0)
 GRIS = (200,200,200)
 AZUL = (100,150,255)
-
+scroll_offset = 0
 #generar letras validas
 def generar_letras_validas(diccionario_path):
     with open(diccionario_path, "r", encoding="utf-8") as f:
@@ -26,10 +26,11 @@ def generar_letras_validas(diccionario_path):
 
     for letras in combinaciones:
         letras = list(letras)
+        letras_set = set(letras)
         for letra_central in letras:
-            letras_set = set(letras)
-            palabras_validas = set()
+            palabras_validas_ = set()
             iniciales_con_palabra = set()
+            tiene_pangrama = False
 
             for palabra in palabras:
                 if (
@@ -37,13 +38,18 @@ def generar_letras_validas(diccionario_path):
                     letra_central in palabra and
                     palabra[0] in letras_set
                 ):
-                    palabras_validas.add(palabra)
+                    palabras_validas_.add(palabra)
                     iniciales_con_palabra.add(palabra[0])
+                    if set(letras_set).issubset(set(palabra)):
+                        tiene_pangrama = True
 
-            if len(palabras_validas) > 0 and all(l in iniciales_con_palabra for l in letras):
-                return letras, letra_central, palabras_validas
+            # Verificar condiciones
+            if len(palabras_validas_) > 0 and \
+               all(letra in iniciales_con_palabra for letra in letras) and \
+               tiene_pangrama:
+                return letras, letra_central, palabras_validas_
+
     return None, None, set()
-
 
 # Cargar las palabras validas desde un archivo de texto
 def cargar_palabras_validas(archivo, letras, letra_central):
@@ -68,7 +74,14 @@ LETRAS, LETRA_CENTRAL, palabras_validas = generar_letras_validas("diccionario_si
 if not LETRAS:
     print("No se pudo generar un conjunto válido de letras.")
     sys.exit()
-
+# imprimir palabras validas al inicio
+print("\n=== Palabras válidas para esta ronda ===")
+print(f"Letras disponibles: {', '.join(LETRAS)}")
+print(f"Letra central requerida: {LETRA_CENTRAL}\n")
+print("Lista completa de palabras válidas:")
+for i, palabra in enumerate(sorted(palabras_validas), 1):
+    print(f"{i}. {palabra}")
+print(f"\nTotal: {len(palabras_validas)} palabras válidas.\n")
 # Inicializar palabras encontradas
 palabras_encontradas = {
     letra: {
@@ -156,9 +169,11 @@ def palabra_es_valida(palabra, letras, letra_central):
         return False
     return True
 
+
 def aplicar_palabra():
     palabra = obtener_palabra_actual()
-    letra_central = LETRAS[0]
+    letra_central = LETRA_CENTRAL
+
     if len(palabra) < 3:
         mostrar_mensaje("Palabra demasiado corta", (200, 0, 0))
         return False
@@ -181,30 +196,59 @@ def aplicar_palabra():
     return False
 
 def dibujar_palabras_encontradas():
+    global scroll_offset
     x_inicio = 680
     y_inicio = 20
-    offset_y = 0
+    area_altura = 500
+    contenido_altura = 0
+
+    # Calcular altura total del contenido
+    for letra in LETRAS:
+        contenido_altura += 30 + len(palabras_encontradas[letra]['palabras']) * 25 + 15
+
+    # Ajustar scroll offset
+    scroll_offset = max(0, min(scroll_offset, contenido_altura - area_altura))
+
+    # Crear superficie para el contenido
+    superficie_contenido = pygame.Surface((200, contenido_altura))
+    superficie_contenido.fill(BLANCO)
+    offset_y = -scroll_offset
+
+    #dibujar
     for letra in LETRAS:
         info = palabras_encontradas[letra]
-        texto = FUENTE.render(
-            f"{letra}: {len(info['palabras'])}/{info['total']}",
-            True, NEGRO
-        )
-        ventana.blit(texto, (x_inicio, y_inicio + offset_y))
+        texto = FUENTE.render(f"{letra}: {len(info['palabras'])}/{info['total']}", True, NEGRO)
+        superficie_contenido.blit(texto, (0, offset_y))
         offset_y += 30
-        # Mostrar palabras encontradas para esta letra
+
         for palabra in info["palabras"]:
             texto_palabra = FUENTE_BOTON.render(palabra, True, NEGRO)
-            ventana.blit(texto_palabra, (x_inicio + 20, y_inicio + offset_y))
+            superficie_contenido.blit(texto_palabra, (20, offset_y))
             offset_y += 25
-        offset_y += 15  # espacio entre secciones
 
-def mostrar_mensaje(mensaje, color, duracion=2):
-    """Muestra un mensaje temporal al usuario"""
-    texto = FUENTE.render(mensaje, True, color)
-    ventana.blit(texto, (ANCHO // 2 - texto.get_width() // 2, 30))
-    pygame.display.flip()
-    pygame.time.delay(duracion * 400)
+        offset_y += 15
+
+    #dibujar solo la parte visible
+    ventana.blit(superficie_contenido, (x_inicio, y_inicio), (0, scroll_offset, 200, area_altura))
+
+    #dibujar barra de scroll
+    if contenido_altura > area_altura:
+        barra_height = int((area_altura ** 2) / contenido_altura)
+        barra_pos = int((scroll_offset * (area_altura - barra_height)) / (contenido_altura - area_altura))
+        pygame.draw.rect(ventana, GRIS, (880, y_inicio + barra_pos, 10, barra_height))
+
+
+def mostrar_mensaje(mensaje, color):
+    global mensaje_actual, color_mensaje, tiempo_mensaje_inicio
+    mensaje_actual = mensaje
+    color_mensaje = color
+    tiempo_mensaje_inicio = pygame.time.get_ticks()
+
+# Variables globales para el mensaje
+mensaje_actual = ""
+color_mensaje = NEGRO
+tiempo_mensaje_inicio = 0
+duracion_mensaje = 2000
 
 def main():
     run = True
@@ -214,10 +258,14 @@ def main():
     distancia = radio * 2 * math.cos(math.radians(30))
     posiciones = obtener_posiciones_hexagonos(cx,cy,distancia)
     hexagonos = [obtener_puntos_hexagono(x,y,radio) for (x,y) in posiciones]
+    tiempo_inicio = pygame.time.get_ticks()  # cronometro
+    global mensaje_actual, color_mensaje, tiempo_mensaje_inicio
+    global scroll_offset
     #bucle principal
     while run:
 #----------------------------Pantalla-------------------------------------------------------------------------------------------------
         ventana.fill(BLANCO)
+
         mx, my = pygame.mouse.get_pos()
         # Mostrar palabra formada
         texto_palabra = FUENTE.render("Palabra: " + obtener_palabra_actual(), True, NEGRO)
@@ -280,6 +328,27 @@ def main():
                     for i, poligono in enumerate(hexagonos):
                         if punto_en_poligono(mx, my, poligono):
                             seleccionados.append(LETRAS[i])
+            elif evento.type == pygame.MOUSEWHEEL:
+                scroll_offset -= evento.y * 30  #sensibilidad del scroll
+                scroll_offset = max(0, scroll_offset)
+
+# Calcular tiempo transcurrido en segundos
+        tiempo_actual = pygame.time.get_ticks()
+        tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000 #segundos
+        minutos = tiempo_transcurrido // 60
+        segundos = tiempo_transcurrido % 60
+        texto_tiempo = FUENTE.render(f"Tiempo: {minutos:02d}:{segundos:02d}", True, NEGRO)
+        ventana.blit(texto_tiempo, (10, 570))  #posicion
+
+
+        # Mostrar mensaje si está activo
+        if mensaje_actual:
+            tiempo_ahora = pygame.time.get_ticks()
+            if tiempo_ahora - tiempo_mensaje_inicio < duracion_mensaje:
+                texto = FUENTE.render(mensaje_actual, True, color_mensaje)
+                ventana.blit(texto, (ANCHO // 2 - texto.get_width() // 2, 30))
+            else:
+                mensaje_actual = ""  # Oculta el mensaje después del tiempo
 
         pygame.display.flip()
         reloj.tick(60)
