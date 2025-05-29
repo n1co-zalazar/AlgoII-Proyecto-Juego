@@ -280,8 +280,4 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
 
         clock.tick(30)
 
-    pygame.quit()
-
-# Esto permite ejecutar el juego directamente
-if __name__ == "__main__":
-    jugar_sopa_letras()
+pygame.display.quit()
