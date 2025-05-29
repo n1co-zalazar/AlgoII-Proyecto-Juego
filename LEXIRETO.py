@@ -280,11 +280,4 @@ def main():
                     for i, poligono in enumerate(hexagonos):
                         if punto_en_poligono(mx, my, poligono):
                             seleccionados.append(LETRAS[i])
-
-        pygame.display.flip()
-        reloj.tick(60)
-
-    pygame.quit()
-    sys.exit()
-
-main()
+pygame.display.quit
