@@ -3,25 +3,26 @@ import pygame
 import math
 import random
 import itertools
+import  const
 
 pygame.init()
 #size ventana
 ANCHO = 800
 ALTO = 600
 #colores
-BLANCO = (255,255,255)
-NEGRO = (0,0,0)
-AMARILLO = (255,204,0)
-GRIS = (200,200,200)
-AZUL = (100,150,255)
-ROJO = (200,0,0)
-NARANJA = (255,102,0)
-VERDE = (0,200,0)
+BLANCO = const.blanco
+NEGRO = const.negro
+AMARILLO = const.amarillo
+GRIS = const.gris
+AZUL = const.azul
+ROJO = const.rojo
+NARANJA = const.naranja
+VERDE = const.verde
 #scroll mouse
 scroll_offset = 0
 #fuente para las letras
-FUENTE = pygame.font.SysFont(None,40)
-FUENTE_BOTON = pygame.font.SysFont(None, 32)
+FUENTE = pygame.font.Font("PressStart2P-Regular.ttf",17)
+FUENTE_BOTON = pygame.font.Font("PressStart2P-Regular.ttf", 12)
 #ventana
 ventana = pygame.display.set_mode((ANCHO, ALTO))
 pygame.display.set_caption("Lexireto")
