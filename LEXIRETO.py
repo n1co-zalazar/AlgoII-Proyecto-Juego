@@ -59,7 +59,7 @@ def generar_letras_validas(diccionario_path):
                         tiene_pangrama = True
 
             if (
-                len(palabras_validas_) >= 20 and
+                len(palabras_validas_) >= 10 and
                 tiene_pangrama and
                 all(l in iniciales_con_palabra for l in letras)
             ):
