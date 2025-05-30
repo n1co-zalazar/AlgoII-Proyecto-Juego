@@ -48,6 +48,7 @@ def generar_letras_validas(diccionario_path):
 
             for palabra in palabras:
                 if (
+                    isinstance(palabra,str) and
                     len(palabra) >= 3 and
                     set(palabra).issubset(letras_set) and
                     letra_central in palabra
