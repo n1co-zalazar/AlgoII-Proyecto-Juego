@@ -6,9 +6,11 @@ import itertools
 import const
 
 pygame.init()
+
 # Configuración inicial
-ANCHO = 800
-ALTO = 600
+ANCHO = const.width
+ALTO = const.length
+
 BLANCO = const.blanco
 NEGRO = const.negro
 AMARILLO = const.amarillo
@@ -18,9 +20,11 @@ ROJO = const.rojo
 NARANJA = const.naranja
 VERDE = const.verde
 scroll_offset = 0
-FUENTE = pygame.font.Font("PressStart2P-Regular.ttf", 17)
-FUENTE_BOTON = pygame.font.Font("PressStart2P-Regular.ttf", 12)
+FUENTE = pygame.font.Font("PressStart2P-Regular.ttf", 22)
+FUENTE_BOTON = pygame.font.Font("PressStart2P-Regular.ttf", 13)
 ventana = pygame.display.set_mode((ANCHO, ALTO))
+fondo = pygame.image.load("fondo3.png").convert()
+fondo = pygame.transform.scale(fondo, (ANCHO, ALTO))
 pygame.display.set_caption("Lexireto")
 seleccionados = []
 reloj = pygame.time.Clock()
@@ -53,19 +57,19 @@ def generar_letras_validas(diccionario_path):
 
     return letras, letra_central, palabras_validas_
 
-# Cargar letras válidas
+# Cargar letras validas
 LETRAS, LETRA_CENTRAL, palabras_validas = generar_letras_validas("diccionario_sin_acentos.txt")
 if not LETRAS:
-    print("No se pudo generar un conjunto válido de letras.")
+    print("No se pudo generar un conjunto valido de letras")
     sys.exit()
 
-# Asegurar que la letra central esté en la primera posición
+# Asegurar que la letra central este en la primera posicion
 if LETRA_CENTRAL in LETRAS:
     LETRAS.remove(LETRA_CENTRAL)
     LETRAS.insert(0, LETRA_CENTRAL)
 
-# Mostrar letras y palabras válidas al inicio
-print("\n=== Palabras válidas para esta ronda ===")
+# Mostrar letras y palabras validas al inicio
+print("\n=== Palabras validas para esta ronda ===")
 print(f"Letras disponibles: {', '.join(LETRAS)}")
 print(f"Letra central requerida: {LETRA_CENTRAL}\n")
 print("Lista completa de palabras válidas:")
@@ -161,18 +165,20 @@ def aplicar_palabra():
         mostrar_mensaje("¡Palabra aceptada!", VERDE)
         return True
 
-    mostrar_mensaje("Palabra no válida", (200, 0, 0))
+    mostrar_mensaje("Palabra no valida", (200, 0, 0))
     return False
 
 def dibujar_palabras_encontradas():
     global scroll_offset
-    x_inicio, y_inicio = 680, 20
+    x_inicio, y_inicio = 950, 110
     area_altura = 500
     contenido_altura = sum(30 + len(info['palabras']) * 25 + 15 for info in palabras_encontradas.values())
-    
+
     scroll_offset = max(0, min(scroll_offset, contenido_altura - area_altura))
     superficie_contenido = pygame.Surface((200, contenido_altura))
-    superficie_contenido.fill(BLANCO)
+    superficie_contenido = pygame.Surface((200, contenido_altura), pygame.SRCALPHA)
+    superficie_contenido.fill((0, 0, 0, 0))  # Transparente total
+
     offset_y = -scroll_offset
 
     for letra, info in palabras_encontradas.items():
@@ -187,7 +193,7 @@ def dibujar_palabras_encontradas():
         offset_y += 15
 
     ventana.blit(superficie_contenido, (x_inicio, y_inicio), (0, scroll_offset, 200, area_altura))
-    
+
     if contenido_altura > area_altura:
         barra_height = int((area_altura ** 2) / contenido_altura)
         barra_pos = int((scroll_offset * (area_altura - barra_height)) / (contenido_altura - area_altura))
@@ -208,7 +214,7 @@ def mostrar_mensaje(mensaje, color):
 def main():
     global scroll_offset, mensaje_actual, color_mensaje, tiempo_mensaje_inicio
     
-    cx, cy = ANCHO // 2, ALTO // 2
+    cx, cy = ANCHO // 2, 260
     radio = 60
     distancia = radio * 2 * math.cos(math.radians(30))
     posiciones = obtener_posiciones_hexagonos(cx, cy, distancia)
@@ -217,21 +223,20 @@ def main():
     run = True
 
     while run:
-        ventana.fill(BLANCO)
+
+        ventana.blit(fondo,(0,0))
         mx, my = pygame.mouse.get_pos()
-
         # Dibujar palabra actual
-        texto_palabra = FUENTE.render("Palabra: " + "".join(seleccionados), True, NEGRO)
-        ventana.blit(texto_palabra, (70, 90))
-
-        # Dibujar hexágonos
+        texto_palabra = FUENTE.render("".join(seleccionados), True, NEGRO) #muestra palabra actual en pantalla
+        ventana.blit(texto_palabra, (500, 470))#posicion de la palabra actual
+        # Dibujar hexagonos
         for i, (x, y) in enumerate(posiciones):
             puntos = hexagonos[i]
             letra_actual = LETRAS[i]
             
             if punto_en_poligono(mx, my, puntos):
                 color = AZUL
-            elif i == 0:  # Hexágono central
+            elif i == 0:  # Hexagono central
                 color = AMARILLO
             else:
                 color = BLANCO
@@ -243,9 +248,9 @@ def main():
             ventana.blit(texto, rect)
 
         # Dibujar botones
-        boton_borrar_palabra = dibujar_boton("Borrar palabra", 130, 500, 180, 40, (mx, my))
-        boton_borrar_letra = dibujar_boton("Borrar letra", 490, 500, 160, 40, (mx, my))
-        boton_aplicar = dibujar_boton("Aplicar", 340, 500, 120, 40, (mx, my))
+        boton_borrar_palabra = dibujar_boton("Borrar palabra", 300, 550, 190, 50, (mx, my))
+        boton_borrar_letra = dibujar_boton("Borrar letra", 700, 550, 190, 50, (mx, my))
+        boton_aplicar = dibujar_boton("Aplicar", 500, 550, 190, 50, (mx, my))
         
         # Dibujar palabras encontradas
         dibujar_palabras_encontradas()
@@ -253,8 +258,8 @@ def main():
         # Mostrar tiempo
         tiempo_actual = pygame.time.get_ticks()
         tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000
-        texto_tiempo = FUENTE.render(f"Tiempo: {tiempo_transcurrido // 60:02d}:{tiempo_transcurrido % 60:02d}", True, NEGRO)
-        ventana.blit(texto_tiempo, (10, 570))
+        texto_tiempo = FUENTE.render(f"{tiempo_transcurrido // 60:02d}:{tiempo_transcurrido % 60:02d}", True, NEGRO)
+        ventana.blit(texto_tiempo, (10, 10))#posicion del tiempo
 
         # Mostrar mensajes
         if mensaje_actual and pygame.time.get_ticks() - tiempo_mensaje_inicio < duracion_mensaje:
@@ -298,5 +303,4 @@ def main():
     pygame.quit()
     sys.exit()
 
-if __name__ == "__main__":
-    main()
+main()

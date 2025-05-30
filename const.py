@@ -1,6 +1,6 @@
 # ancho y largo de la ventana
-width = 1400
-length = 750
+width = 1200
+length = 650
 
 #colores
 negro = (0, 0, 0)
