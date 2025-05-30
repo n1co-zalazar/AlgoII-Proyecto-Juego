@@ -405,7 +405,6 @@ bello
 ben
 bendicion
 bendiga
-benny
 berlin
 besar
 beso
@@ -422,7 +421,6 @@ bienvenidos
 bill
 billetes
 bin
-black
 blanca
 blanco
 blancos
@@ -471,7 +469,6 @@ brown
 bruce
 bruja
 brujas
-buck
 buen
 buena
 buenas
@@ -491,7 +488,6 @@ buscarte
 buscare
 buscas
 busco
-bush
 busque
 busquen
 buzz
@@ -599,7 +595,6 @@ carretera
 carro
 carta
 cartas
-carter
 cartera
 caracter
 casa
@@ -704,7 +699,6 @@ cirugia
 cirujano
 cita
 citas
-city
 ciudad
 ciudadano
 ciudadanos
@@ -746,7 +740,6 @@ colina
 collar
 color
 colores
-colt
 columna
 coma
 comandante
@@ -754,7 +747,6 @@ comando
 combate
 combustible
 come
-comen
 comence
 comenzamos
 comenzar
@@ -901,7 +893,6 @@ convertido
 convertirse
 convierte
 convirtio
-cooper
 coordenadas
 copa
 copia
@@ -1073,7 +1064,6 @@ david
 dano
 danos
 de
-dean
 deba
 debajo
 debamos
@@ -1215,7 +1205,6 @@ desperte
 despierta
 despierte
 despierto
-despues
 despues
 destino
 destruccion
@@ -1496,7 +1485,6 @@ ensena
 ensenar
 ensenarte
 ensenare
-enseno
 entender
 entenderlo
 entendido
@@ -1528,7 +1516,6 @@ entrenamiento
 entrevista
 entro
 entre
-entro
 enviado
 enviar
 enviaron
@@ -1792,6 +1779,7 @@ fiscal
 flor
 flores
 florida
+florinda
 flota
 fondo
 fondos
@@ -1805,7 +1793,6 @@ foto
 fotografia
 fotografias
 fotos
-fox
 fracaso
 francamente
 francesa
@@ -1844,7 +1831,6 @@ funcionan
 funcionando
 funcionar
 funcionara
-funcione
 funciono
 funcion
 funeral
@@ -1876,7 +1862,6 @@ gano
 gane
 gano
 garaje
-garfield
 garganta
 gas
 gasolina
@@ -1885,7 +1870,6 @@ gatillo
 gatito
 gato
 gatos
-gay
 generacion
 general
 generalmente
@@ -1907,7 +1891,6 @@ golpe
 golpear
 golpes
 golpeo
-gorda
 gordo
 gordon
 grace
@@ -2034,7 +2017,6 @@ hagan
 hagas
 hago
 hagamoslo
-hall
 hallar
 hambre
 han
@@ -2096,7 +2078,6 @@ hija
 hijas
 hijo
 hijos
-hill
 historia
 historial
 historias
@@ -2597,7 +2578,6 @@ marco
 marica
 maricon
 marido
-marihuana
 marina
 marissa
 martes
@@ -2820,7 +2800,6 @@ muriendo
 murieron
 murio
 muro
-murphy
 museo
 mutantes
 muy
@@ -3261,8 +3240,6 @@ pete
 peter
 petroleo
 pez
-philip
-phoebe
 piano
 pico
 pide
@@ -3334,7 +3311,7 @@ poder
 poderes
 poderosa
 poderoso
-podido
+podio
 podremos
 podria
 podra
@@ -3354,7 +3331,7 @@ poema
 poli
 policia
 policial
-policia
+policiales
 policias
 pollo
 polvo
@@ -4099,7 +4076,6 @@ somos
 son
 sonar
 sonido
-sonny
 sonrisa
 sopa
 soportar
@@ -4115,7 +4091,6 @@ sosten
 soy
 sonando
 sr
-stanley
 steven
 su
 suave
@@ -4268,7 +4243,6 @@ terminar
 termine
 termino
 termine
-termino
 terreno
 terrible
 territorio
@@ -4280,7 +4254,6 @@ testigo
 testigos
 tetas
 texas
-thunderbird
 ti
 tiburones
 tiburon
@@ -4330,7 +4303,6 @@ tomas
 tomaste
 tome
 tomen
-tommy
 tomo
 tome
 tomo
@@ -4424,6 +4396,7 @@ tu
 tubo
 tumba
 turner
+trucho
 turno
 tus
 tuve
@@ -4609,7 +4582,6 @@ vinimos
 viniste
 vino
 vio
-violacion
 violencia
 virgen
 virginia
@@ -4685,8 +4657,8 @@ walter
 whisky
 will
 william
-williams
 y
+ye
 ya
 yeah
 yendo
