@@ -14,7 +14,20 @@ NEGRO = (0,0,0)
 AMARILLO = (255,204,0)
 GRIS = (200,200,200)
 AZUL = (100,150,255)
+ROJO = (200,0,0)
+NARANJA = (255,102,0)
+VERDE = (0,200,0)
+#scroll mouse
 scroll_offset = 0
+#fuente para las letras
+FUENTE = pygame.font.SysFont(None,40)
+FUENTE_BOTON = pygame.font.SysFont(None, 32)
+#ventana
+ventana = pygame.display.set_mode((ANCHO, ALTO))
+pygame.display.set_caption("Lexireto")
+seleccionados = []#letras seleccionadas
+reloj = pygame.time.Clock()
+
 #generar letras validas
 def generar_letras_validas(diccionario_path):
     with open(diccionario_path, "r", encoding="utf-8") as f:
@@ -100,14 +113,7 @@ for letra in LETRAS:
 todas_encontradas = set() #para evitar palabras duplicadas
 # Lista para guardar palabras aceptadas (para imprimir al final)
 lista_palabras_encontradas = []
-#fuente para las letras
-FUENTE = pygame.font.SysFont(None,40)
-FUENTE_BOTON = pygame.font.SysFont(None, 32)
-#ventana
-ventana = pygame.display.set_mode((ANCHO, ALTO))
-pygame.display.set_caption("Lexireto")
-seleccionados = []#letras seleccionadas
-reloj = pygame.time.Clock()
+
 #-----------------------------------------Funciones dibujos---------------------------------------------------------------------------
 def obtener_puntos_hexagono(cx,cy,radio):
     puntos = []
@@ -175,11 +181,11 @@ def aplicar_palabra():
     letra_central = LETRA_CENTRAL
 
     if len(palabra) < 3:
-        mostrar_mensaje("Palabra demasiado corta", (200, 0, 0))
+        mostrar_mensaje("Palabra demasiado corta", ROJO)
         return False
 
     if letra_central not in palabra:
-        mostrar_mensaje("Falta la letra central", (255, 102, 0))  # naranja
+        mostrar_mensaje("Falta la letra central", NARANJA)
         return False
 
     if (palabra_es_valida(palabra, LETRAS, letra_central) and
@@ -189,7 +195,7 @@ def aplicar_palabra():
         todas_encontradas.add(palabra)
         lista_palabras_encontradas.append(palabra)  # Agregar a la lista final
         seleccionados.clear()
-        mostrar_mensaje("¡Palabra aceptada!", (0, 200, 0))
+        mostrar_mensaje("¡Palabra aceptada!", VERDE)
         return True
 
     mostrar_mensaje("Palabra no valida", (200, 0, 0))
@@ -328,12 +334,11 @@ def main():
                     for i, poligono in enumerate(hexagonos):
                         if punto_en_poligono(mx, my, poligono):
                             seleccionados.append(LETRAS[i])
-<<<<<<< HEAD
             elif evento.type == pygame.MOUSEWHEEL:
                 scroll_offset -= evento.y * 30  #sensibilidad del scroll
                 scroll_offset = max(0, scroll_offset)
 
-# Calcular tiempo transcurrido en segundos
+        # Calcular tiempo transcurrido en segundos
         tiempo_actual = pygame.time.get_ticks()
         tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000 #segundos
         minutos = tiempo_transcurrido // 60
@@ -358,6 +363,3 @@ def main():
     sys.exit()
 
 main()
-=======
-pygame.display.quit
->>>>>>> 8efdb81d7d069fe4aeed1294f723f5cda2f9fe43
