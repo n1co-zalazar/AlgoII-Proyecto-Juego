@@ -32,7 +32,7 @@ reloj = pygame.time.Clock()
 #generar letras validas
 def generar_letras_validas(diccionario_path):
     with open(diccionario_path, "r", encoding="utf-8") as f:
-        palabras = [line.strip().upper() for line in f if len(line.strip()) >= 3]
+        palabras = [line.strip().upper() for line in f if len(line.strip()) >= 3 and line.strip().isalpha()]
 
     letras_usadas = set("".join(palabras))
     combinaciones = list(itertools.combinations(letras_usadas, 7))
@@ -43,24 +43,25 @@ def generar_letras_validas(diccionario_path):
         letras_set = set(letras)
         for letra_central in letras:
             palabras_validas_ = set()
-            iniciales_con_palabra = set()
             tiene_pangrama = False
+            iniciales_con_palabra = set()
 
             for palabra in palabras:
                 if (
+                    len(palabra) >= 3 and
                     set(palabra).issubset(letras_set) and
-                    letra_central in palabra and
-                    palabra[0] in letras_set
+                    letra_central in palabra
                 ):
                     palabras_validas_.add(palabra)
                     iniciales_con_palabra.add(palabra[0])
                     if set(letras_set).issubset(set(palabra)):
                         tiene_pangrama = True
 
-            # Verificar condiciones
-            if len(palabras_validas_) > 0 and \
-               all(letra in iniciales_con_palabra for letra in letras) and \
-               tiene_pangrama:
+            if (
+                len(palabras_validas_) >= 20 and
+                tiene_pangrama and
+                all(l in iniciales_con_palabra for l in letras)
+            ):
                 return letras, letra_central, palabras_validas_
 
     return None, None, set()
@@ -75,6 +76,7 @@ def cargar_palabras_validas(archivo, letras, letra_central):
                 palabra = linea.strip().upper()
                 if (
                     len(palabra) >= 3 and
+                    palabra.isalpha() and
                     set(palabra).issubset(letras_set) and
                     letra_central in palabra and
                     palabra[0] in letras_set
