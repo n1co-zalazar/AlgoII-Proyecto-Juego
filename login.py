@@ -1,6 +1,5 @@
 import pygame
 import os
-import subprocess
 import time
 
 pygame.init()
@@ -24,12 +23,10 @@ GRAY = (200, 200, 200)
 BLACK = (0, 0, 0)
 RED = (255, 100, 100)
 YELLOW = (255, 255, 0)
-GREEN = (0, 255, 0) # Añadimos un color verde para el borde activo, si lo prefieres
 
 # --- Funciones de Ayuda ---
 
 def cargar_usuarios():
-    """Carga los usuarios y sus contraseñas desde el archivo de usuarios."""
     users = {}
     if os.path.exists(USERS_FILE):
         with open(USERS_FILE, "r") as f:
@@ -40,12 +37,10 @@ def cargar_usuarios():
     return users
 
 def guardar_usuario(username, password):
-    """Guarda un nuevo usuario y su contraseña en el archivo."""
     with open(USERS_FILE, "a") as f:
         f.write(f"{username},{password}\n")
 
 def dibujar_texto(texto, x, y, color=WHITE, fuente=font, contorno=True):
-    """Dibuja texto en la pantalla, opcionalmente con un contorno negro."""
     if contorno:
         for dx in [-1, 0, 1]:
             for dy in [-1, 0, 1]:
@@ -56,7 +51,6 @@ def dibujar_texto(texto, x, y, color=WHITE, fuente=font, contorno=True):
     screen.blit(render, (x, y))
 
 def dibujar_texto_centrado_en_rect(texto, rect, color=BLACK, fuente=font, contorno=False):
-    """Dibuja texto centrado dentro de un rectángulo, opcionalmente con contorno."""
     render = fuente.render(texto, True, color)
     texto_rect = render.get_rect(center=rect.center)
     if contorno:
@@ -69,36 +63,25 @@ def dibujar_texto_centrado_en_rect(texto, rect, color=BLACK, fuente=font, contor
     screen.blit(render, texto_rect)
 
 def dibujar_texto_input_centrado(texto, rect, color=WHITE, fuente=font):
-    """Dibuja el texto de entrada centrado en su caja."""
     render = fuente.render(texto, True, color)
     texto_rect = render.get_rect(center=rect.center)
     screen.blit(render, texto_rect)
 
 def dibujar_rect_redondeado(surface, color, rect, radius, width=0):
-    """
-    Dibuja un rectángulo con esquinas redondeadas.
-    surface: La superficie donde dibujar.
-    color: El color del rectángulo.
-    rect: El objeto pygame.Rect que define la posición y el tamaño.
-    radius: El radio de las esquinas.
-    width: Si es 0, el rectángulo se rellena. De lo contrario, es el grosor del borde.
-    """
     if radius > rect.width / 2:
         radius = rect.width / 2
     if radius > rect.height / 2:
         radius = rect.height / 2
 
-    # Dibuja las cuatro esquinas (círculos)
     pygame.draw.circle(surface, color, (rect.left + radius, rect.top + radius), radius, width)
     pygame.draw.circle(surface, color, (rect.right - radius, rect.top + radius), radius, width)
     pygame.draw.circle(surface, color, (rect.left + radius, rect.bottom - radius), radius, width)
     pygame.draw.circle(surface, color, (rect.right - radius, rect.bottom - radius), radius, width)
 
-    # Dibuja los cuatro rectángulos conectores
     pygame.draw.rect(surface, color, (rect.left + radius, rect.top, rect.width - 2 * radius, rect.height), width)
     pygame.draw.rect(surface, color, (rect.left, rect.top + radius, rect.width, rect.height - 2 * radius), width)
 
-    if width == 0: # Si está relleno, rellena el centro
+    if width == 0:
         pygame.draw.rect(surface, color, (rect.left + radius, rect.top, rect.width - 2 * radius, rect.height))
         pygame.draw.rect(surface, color, (rect.left, rect.top + radius, rect.width, rect.height - 2 * radius))
 
@@ -106,32 +89,28 @@ def dibujar_rect_redondeado(surface, color, rect, radius, width=0):
 estado = "inicio"
 username = ""
 password = ""
-activo = None  # Indica qué campo de entrada está activo
+activo = None
 mensaje = ""
 mensaje_temp = ""
-modo = "login" # Puede ser "login" o "registro"
+modo = "login"
 
-# Cajas de entrada
 input_boxes = {
     "username": pygame.Rect(200, 100, 250, 40),
     "password": pygame.Rect(200, 160, 250, 40),
 }
-# Botones
 boton_login = pygame.Rect(180, 130, 240, 50)
 boton_registro = pygame.Rect(180, 200, 240, 50)
 boton_volver = pygame.Rect(20, 20, 100, 35)
 
-# --- Bucle Principal del Juego ---
 running = True
 while running:
-    screen.blit(fondo, (0, 0)) # Dibuja el fondo
-    caps = pygame.key.get_mods() & pygame.KMOD_CAPS # Detecta si Bloq Mayús está activo
+    screen.blit(fondo, (0, 0))
+    caps = pygame.key.get_mods() & pygame.KMOD_CAPS
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        # Lógica para el estado "inicio"
         if estado == "inicio":
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if boton_login.collidepoint(event.pos):
@@ -151,14 +130,11 @@ while running:
                     password = ""
                     activo = "username"
 
-        # Lógica para el estado "formulario"
         elif estado == "formulario":
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # Activa la caja de entrada si se hace clic en ella
                 for campo, rect in input_boxes.items():
                     if rect.collidepoint(event.pos):
                         activo = campo
-                # Vuelve a la pantalla de inicio si se hace clic en el botón "Volver"
                 if boton_volver.collidepoint(event.pos):
                     estado = "inicio"
                     username = ""
@@ -168,16 +144,11 @@ while running:
                     activo = None
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN: # Si se presiona ENTER
+                if event.key == pygame.K_RETURN:
                     usuarios = cargar_usuarios()
-
                     if modo == "login":
                         if username in usuarios and usuarios[username] == password:
                             mensaje = f"Bienvenido, {username}!"
-                            time.sleep(0.5)
-                            pygame.quit()
-                            subprocess.run(["python", "letras.py"]) # Ejecuta el siguiente script
-                            exit()
                         else:
                             mensaje = "Usuario o contraseña incorrectos."
                     elif modo == "registro":
@@ -194,27 +165,25 @@ while running:
                             mensaje = "¡Registrado con éxito!"
                             username = ""
                             password = ""
-                            activo = "username" # Reinicia el campo activo a usuario
-                elif event.key == pygame.K_BACKSPACE: # Si se presiona retroceso
+                            activo = "username"
+                elif event.key == pygame.K_BACKSPACE:
                     if activo == "username":
                         username = username[:-1]
                         mensaje_temp = ""
                     elif activo == "password":
                         password = password[:-1]
-                elif event.unicode.isprintable(): # Si es un carácter imprimible
+                elif event.unicode.isprintable():
                     if activo == "username":
                         if len(username) < 14:
                             username += event.unicode
-                            mensaje_temp = "" # Borra el mensaje temporal si el usuario sigue escribiendo
+                            mensaje_temp = ""
                         else:
                             mensaje_temp = "Máx. 14 caracteres"
                     elif activo == "password":
                         password += event.unicode
 
-    # --- Renderizado de Elementos en Pantalla ---
     if estado == "inicio":
         dibujar_texto("Elige una opción:", 180, 60)
-        # Dibujar botones con fondo negro y texto blanco (con bordes redondeados)
         dibujar_rect_redondeado(screen, BLACK, boton_login, 15)
         dibujar_rect_redondeado(screen, BLACK, boton_registro, 15)
         dibujar_texto_centrado_en_rect("Iniciar Sesión", boton_login, WHITE, font, contorno=False)
@@ -224,25 +193,19 @@ while running:
         dibujar_texto("Usuario:", 80, 110)
         dibujar_texto("Contraseña:", 80, 170)
 
-        # Dibujar las cajas de entrada (rectángulos sin bordes redondeados)
         for campo, rect in input_boxes.items():
-            # Dibujar el fondo del rectángulo en negro
             pygame.draw.rect(screen, BLACK, rect)
-
-            # Dibujar el borde del rectángulo
             if activo == campo:
-                # Borde blanco de 2px cuando está activo
                 pygame.draw.rect(screen, WHITE, rect, 2)
             else:
-                # Borde gris de 2px cuando no está activo
                 pygame.draw.rect(screen, GRAY, rect, 2)
 
             contenido = username if campo == "username" else "*" * len(password)
             dibujar_texto_input_centrado(contenido, rect, WHITE, font)
 
-        # Dibujar el botón "Volver" con bordes redondeados
-        dibujar_rect_redondeado(screen, GRAY, boton_volver, 10)
-        dibujar_texto_centrado_en_rect("Volver", boton_volver, BLACK, small_font, contorno=False)
+        # Aquí está el cambio: botón "Volver" negro con texto blanco
+        dibujar_rect_redondeado(screen, BLACK, boton_volver, 10)
+        dibujar_texto_centrado_en_rect("Volver", boton_volver, WHITE, small_font, contorno=False)
 
         dibujar_texto("Presiona ENTER para continuar", 150, 230, WHITE)
         if caps and activo == "password":
@@ -252,7 +215,7 @@ while running:
         if mensaje_temp:
             dibujar_texto(mensaje_temp, 200, 145, RED, small_font)
 
-    pygame.display.flip() # Actualiza la pantalla
-    clock.tick(60) # Limita el framerate a 60 FPS
+    pygame.display.flip()
+    clock.tick(60)
 
-pygame.quit() # Sale de Pygame al terminar el bucle
+pygame.quit()
