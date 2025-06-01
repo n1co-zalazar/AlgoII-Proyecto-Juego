@@ -35,6 +35,8 @@ mensaje_actual = ""
 color_mensaje = NEGRO
 tiempo_mensaje_inicio = 0
 duracion_mensaje = 2000
+#cargar letras validas
+
 #------------------------funciones generar letras y palabras validas----------------------------------------------------
 def generar_letras_validas(diccionario_path, min_palabras=30, max_intentos=100):
     with open(diccionario_path, "r", encoding="utf-8") as f:
@@ -71,40 +73,6 @@ def generar_letras_validas(diccionario_path, min_palabras=30, max_intentos=100):
             return letras, letra_central, palabras_validas_
 
     return None, None, set()
-#cargar letras validas
-LETRAS, LETRA_CENTRAL, palabras_validas = generar_letras_validas("diccionario_sin_acentos.txt")
-if not LETRAS:
-    print("No se pudo generar un conjunto valido de letras")
-    sys.exit()
-
-#asegurar que la letra central este en la primera posicion
-if LETRA_CENTRAL in LETRAS:
-    LETRAS.remove(LETRA_CENTRAL)
-    LETRAS.insert(0, LETRA_CENTRAL)
-
-#mostrar letras y palabras validas al inicio
-print("\n=== Palabras validas para esta ronda ===")
-print(f"Letras disponibles: {', '.join(LETRAS)}")
-print(f"Letra central requerida: {LETRA_CENTRAL}\n")
-print("Lista completa de palabras válidas:")
-for i, palabra in enumerate(sorted(palabras_validas), 1):
-    print(f"{i}. {palabra}")
-print(f"\nTotal: {len(palabras_validas)} palabras válidas.\n")
-
-
-#inicializar palabras encontradas
-palabras_encontradas = {
-    letra: {'palabras': [], 'contador': 0, 'total': 0} for letra in LETRAS
-}
-
-for letra in LETRAS:
-    palabras_encontradas[letra]['total'] = sum(
-        1 for palabra in palabras_validas
-        if palabra.startswith(letra) and LETRA_CENTRAL in palabra
-    )
-
-todas_encontradas = set()
-lista_palabras_encontradas = []
 
 #-------------------------------funciones de dibujar hexagonos-------------------------------------------------------
 def obtener_puntos_hexagono(cx, cy, radio):
@@ -145,7 +113,7 @@ def dibujar_boton(texto, x, y, ancho, alto, mouse_pos):
     ventana.blit(texto_render, texto_render.get_rect(center=rect.center))
     return rect
 #-------------------------------fin funciones de dibubar hexagonos-------------------------------------------------------------
-#----------------------funciones de logica del juego----------------------------------------------------------------
+# ----------------------funciones de logica del juego----------------------------------------------------------------
 def palabra_es_valida(palabra):
     if len(palabra) < 3:
         return False
@@ -159,9 +127,10 @@ def palabra_es_valida(palabra):
         return False
     return True
 
+
 def aplicar_palabra():
     palabra = "".join(seleccionados)
-    
+
     if len(palabra) < 3:
         mostrar_mensaje("Palabra demasiado corta", ROJO)
         return False
@@ -181,6 +150,7 @@ def aplicar_palabra():
 
     mostrar_mensaje("Palabra no valida", (200, 0, 0))
     return False
+
 
 def dibujar_palabras_encontradas():
     global scroll_offset
@@ -211,13 +181,15 @@ def dibujar_palabras_encontradas():
     if contenido_altura > area_altura:
         barra_height = int((area_altura ** 2) / contenido_altura)
         barra_pos = int((scroll_offset * (area_altura - barra_height)) / (contenido_altura - area_altura))
-        pygame.draw.rect(ventana, NEGRO, (x_inicio-20, y_inicio + barra_pos, 8, barra_height))
+        pygame.draw.rect(ventana, NEGRO, (x_inicio - 20, y_inicio + barra_pos, 8, barra_height))
+
 
 def mostrar_mensaje(mensaje, color):
     global mensaje_actual, color_mensaje, tiempo_mensaje_inicio
     mensaje_actual = mensaje
     color_mensaje = color
     tiempo_mensaje_inicio = pygame.time.get_ticks()
+
 
 def dibujar_botones(cx, y_botones, mx, my):
     ancho_boton = 219
@@ -228,11 +200,49 @@ def dibujar_botones(cx, y_botones, mx, my):
     x_borrar_palabra = x_aplicar - ancho_boton - espacio_entre_boton
     x_borrar_letra = x_aplicar + ancho_boton + espacio_entre_boton
 
-    boton_borrar_palabra = dibujar_boton("Borrar palabra", x_borrar_palabra, y_botones, ancho_boton, alto_boton, (mx, my))
+    boton_borrar_palabra = dibujar_boton("Borrar palabra", x_borrar_palabra, y_botones, ancho_boton, alto_boton,
+                                         (mx, my))
     boton_aplicar = dibujar_boton("Aplicar", x_aplicar, y_botones, ancho_boton, alto_boton, (mx, my))
     boton_borrar_letra = dibujar_boton("Borrar letra", x_borrar_letra, y_botones, ancho_boton, alto_boton, (mx, my))
 
     return boton_borrar_palabra, boton_aplicar, boton_borrar_letra
+
+
+
+LETRAS, LETRA_CENTRAL, palabras_validas = generar_letras_validas("diccionario_sin_acentos.txt")
+
+if not LETRAS:
+    print("No se pudo generar un conjunto valido de letras")
+    sys.exit()
+
+#asegurar que la letra central este en la primera posicion
+if LETRA_CENTRAL in LETRAS:
+    LETRAS.remove(LETRA_CENTRAL)
+    LETRAS.insert(0, LETRA_CENTRAL)
+
+#mostrar letras y palabras validas al inicio
+print("\n=== Palabras validas para esta ronda ===")
+print(f"Letras disponibles: {', '.join(LETRAS)}")
+print(f"Letra central requerida: {LETRA_CENTRAL}\n")
+print("Lista completa de palabras válidas:")
+for i, palabra in enumerate(sorted(palabras_validas), 1):
+    print(f"{i}. {palabra}")
+print(f"\nTotal: {len(palabras_validas)} palabras válidas.\n")
+
+
+#inicializar palabras encontradas
+palabras_encontradas = {
+    letra: {'palabras': [], 'contador': 0, 'total': 0} for letra in LETRAS
+}
+
+for letra in LETRAS:
+    palabras_encontradas[letra]['total'] = sum(
+        1 for palabra in palabras_validas
+        if palabra.startswith(letra) and LETRA_CENTRAL in palabra
+    )
+
+todas_encontradas = set()
+lista_palabras_encontradas = []
 
 #juego
 def main():
