@@ -5,9 +5,10 @@ import time
 from collections import defaultdict
 from const import *
 
+
 def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=None):
     """Función principal del juego de Sopa de Letras"""
-    
+
     # Configuración del juego
     NUM_PALABRAS = 8
     MARGEN_DERECHO = 400
@@ -134,8 +135,8 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
 
         # Información del juego
         palabra_actual = "".join([matriz[i][j] for i, j in seleccionadas])
-        texto_palabra = fuente.render(f"Palabra actual: {palabra_actual}", True, negro)
-        screen.blit(texto_palabra, (20, length - 80))
+        texto_palabra = fuente.render(f"Palabra: {palabra_actual}", True, negro)
+        screen.blit(texto_palabra, (200, length - 80))
 
         # Tiempo transcurrido
         tiempo_total = int(time.time() - inicio_tiempo)
@@ -151,7 +152,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
         screen.blit(numero_tiempo, (37, 130))
         texto_encontradas = fuente.render(f"Encontradas: {len(palabras_encontradas)}/{len(PALABRAS)}", True, negro)
         screen.blit(texto_tiempo, (5, 30))
-        screen.blit(texto_encontradas, (850, length - 35))
+        screen.blit(texto_encontradas, (850, length - 80))
 
         # Panel de palabras
         x_base = offset_x + columnas * tam_celda + 40
@@ -193,9 +194,9 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
         fuente_titulo = pygame.font.Font('PressStart2P-Regular.ttf', 24)
         fuente_subtitulo = pygame.font.Font('PressStart2P-Regular.ttf', 16)
         fuente_instrucciones = pygame.font.Font('PressStart2P-Regular.ttf', 14)
-        
+
         # Título principal
-        titulo = fuente_titulo.render("Sopa de Letras Serpiente", True, negro)
+        titulo = fuente_titulo.render("LETRAS", True, negro)
         screen.blit(titulo, (width // 2 - titulo.get_width() // 2, 100))
 
         # Subtítulo
@@ -212,7 +213,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
             "No todas las palabras formadas serán válidas",
             "Solo cuentan las palabras propuestas"
         ]
-        
+
         y_pos = 220
         for linea in instrucciones:
             texto = fuente_instrucciones.render(linea, True, negro)
@@ -224,7 +225,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
         screen.blit(mensaje_inicio, (width // 2 - mensaje_inicio.get_width() // 2, y_pos + 50))
 
         pygame.display.flip()
-        
+
         esperando = True
         while esperando:
             for event in pygame.event.get():
@@ -239,12 +240,13 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
         screen.blit(fondo, (0, 0))
         tiempo_final = int(time.time() - inicio_tiempo)
         fuente = pygame.font.Font('PressStart2P-Regular.ttf', 20)
-        mensaje = fuente.render("¡FELICIDADES!", True, verde)
+        fuentetitulo = pygame.font.Font('PressStart2P-Regular.ttf', 50)
+        mensaje = fuentetitulo.render("¡FELICIDADES!", True, verde)
         subtitulo = fuente.render("Encontraste todas las palabras", True, negro)
         tiempo = fuente.render(f"Tiempo total: {tiempo_final} segundos", True, negro)
         instruccion = fuente.render("Presiona cualquier tecla para salir", True, negro)
 
-        screen.blit(mensaje, (width // 2 - mensaje.get_width() // 2, length // 2 - 80))
+        screen.blit(mensaje, (width // 2 - mensaje.get_width() // 2, length // 2 - 100))
         screen.blit(subtitulo, (width // 2 - subtitulo.get_width() // 2, length // 2 - 40))
         screen.blit(tiempo, (width // 2 - tiempo.get_width() // 2, length // 2))
         screen.blit(instruccion, (width // 2 - instruccion.get_width() // 2, length // 2 + 60))
@@ -334,7 +336,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
                                 palabras_encontradas.append(palabra)
                                 palabra_valida = True
                                 break
-                        
+
                         if not palabra_valida and len(seleccionadas) > 1:
                             mensaje_error = "PALABRA NO VALIDA"
                             tiempo_error = time.time()
