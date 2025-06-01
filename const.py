@@ -4,13 +4,13 @@ length = 650
 
 #colores
 negro = (0, 0, 0)
-blanco =(255, 255, 255)
+blanco =(254, 249, 231)
 rojo = (255, 0, 0)
 verde = (0, 255, 0)
-azul = (0, 0, 255)
+azul = (215, 204, 200)
 color_opciones = (255, 81, 0)
-amarillo = (255,204,0)
-gris = (200,200,200)
+amarillo = (255, 214, 0)
+gris = (213, 216, 220)
 naranja = (255,102,0)
 # tamaño letra
 tamano_letra_titulo = 40
