@@ -3,10 +3,10 @@ import random
 import sys
 import time
 from collections import defaultdict
-from const import *
+from const2 import*
 
 
-def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=None):
+def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
     """Función principal del juego de Sopa de Letras"""
 
     # Configuración del juego
@@ -14,8 +14,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
     MARGEN_DERECHO = 400
     MARGEN_INFERIOR = 150
     DIRECCIONES = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-    mensaje_error = ""
-    tiempo_error = 0
+
 
     # Cargar palabras si no se proporcionan
     def cargar_palabras_desde_archivo(nombre_archivo):
@@ -25,7 +24,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
         except FileNotFoundError:
             print(f"Error: No se encontró el archivo {nombre_archivo}")
             return ["PYTHON", "PROGRAMA", "SERPIENTE", "JUEGO", "CODIGO", "TECLADO", "VENTANA",
-                    "COMPUTADORA"]
+                    "COMPUTADORA"]  # Palabras por defecto
 
     if palabras is None:
         palabras = cargar_palabras_desde_archivo("diccionario_sin_acentos.txt")
@@ -37,19 +36,23 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
     # Inicializar Pygame
     pygame.init()
     screen = pygame.display.set_mode((width, length))
-    fondo = pygame.image.load("fondo3.png").convert()
+    fondo = pygame.image.load("imágenes/fondo3.png").convert()
     fondo = pygame.transform.scale(fondo, (width, length))
-    reloj = pygame.image.load("time.png").convert()
+    reloj = pygame.image.load("imágenes/time.png").convert()
     reloj = pygame.transform.scale(reloj, (140, 130))
 
+
     # Configurar márgenes y calcular tamaño de celda dinámico
+    MARGEN_DERECHO = 400
+    MARGEN_INFERIOR = 150
+
     tam_celda_w = (width - MARGEN_DERECHO) // columnas
     tam_celda_h = (length - MARGEN_INFERIOR) // filas
     tam_celda = min(tam_celda_w, tam_celda_h)
 
     # Calcular offset para centrar matriz
     offset_x = (width - MARGEN_DERECHO - columnas * tam_celda) // 2
-    offset_y = 30 + (length - MARGEN_INFERIOR - filas * tam_celda) // 2
+    offset_y = 30+(length - MARGEN_INFERIOR - filas * tam_celda) // 2
 
     fuente = pygame.font.SysFont('Arial', 36)
     fuente_celda = pygame.font.SysFont('Arial', tam_celda - 15)
@@ -102,21 +105,16 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
                     matriz[i][j] = random.choice(letras)
 
     def dibujar(matriz, seleccionadas):
-        nonlocal mensaje_error, tiempo_error
-        fuente = pygame.font.Font('PressStart2P-Regular.ttf', 20)
-        screen.blit(fondo, (0, 0))
-        screen.blit(reloj, (5, 60))
-
-        # Mostrar nombre de usuario si existe
-        if usuario:
-            texto_usuario = fuente.render(f"Jugador: {usuario}", True, negro)
-            screen.blit(texto_usuario, (width - texto_usuario.get_width() - 20, 20))
+        fuente = pygame.font.Font('letras/letraproyecto.ttf', 20)
+        screen.blit(fondo, (0, 0))  # En vez de screen.fill(blanco)
+        screen.blit(reloj, (17,60))
 
         # Dibujar matriz
         for i in range(filas):
             for j in range(columnas):
                 letra = matriz[i][j]
                 x, y = offset_x + j * tam_celda, offset_y + i * tam_celda
+
                 rect = pygame.Rect(x, y, tam_celda, tam_celda)
 
                 if (i, j) in seleccionadas:
@@ -128,34 +126,35 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
                 text_rect = texto.get_rect(center=rect.center)
                 screen.blit(texto, text_rect)
 
-        # Mostrar mensaje de error
-        if mensaje_error and (time.time() - tiempo_error < 2):
-            texto_error = fuente.render(mensaje_error, True, rojo)
-            screen.blit(texto_error, (width // 2 - texto_error.get_width() // 2, length - 60))
-
         # Información del juego
         palabra_actual = "".join([matriz[i][j] for i, j in seleccionadas])
-        texto_palabra = fuente.render(f"Palabra: {palabra_actual}", True, negro)
+        texto_palabra = fuente.render(f"Palabra actual: {palabra_actual}", True, rojo)
         screen.blit(texto_palabra, (200, length - 80))
 
-        # Tiempo transcurrido
+        segundos = int(time.time() - inicio_tiempo)
         tiempo_total = int(time.time() - inicio_tiempo)
         horas = tiempo_total // 3600
         minutos = (tiempo_total % 3600) // 60
         segundos = tiempo_total % 60
         tiempo_formateado = f"{horas:01}:{minutos:02}:{segundos:02}"
 
-        fuente_tiempo = pygame.font.Font('PressStart2P-Regular.ttf', 20)
-        texto_tiempo = fuente_tiempo.render("WARNING", True, rojo)
-        fuente_time = pygame.font.Font('PressStart2P-Regular.ttf', 10)
+        fuente = pygame.font.Font('letras/letraproyecto.ttf', 20)
+        texto_tiempo = fuente.render(f"WARNING",
+                                     True, rojo)
+
+        fuente_time = pygame.font.Font('letras/letraproyecto.ttf', 10)
+
+
         numero_tiempo = fuente_time.render(str(tiempo_formateado), True, negro)
-        screen.blit(numero_tiempo, (37, 130))
-        texto_encontradas = fuente.render(f"Encontradas: {len(palabras_encontradas)}/{len(PALABRAS)}", True, negro)
-        screen.blit(texto_tiempo, (5, 30))
-        screen.blit(texto_encontradas, (850, length - 80))
+
+        screen.blit(numero_tiempo, (48,130 ))
+
+        texto_encontradas=fuente.render(f"Encontradas: {len(palabras_encontradas)}/{len(PALABRAS)}",True,negro)
+        screen.blit(texto_tiempo, (15, 30))
+        screen.blit(texto_encontradas, (850,length - 80))
 
         # Panel de palabras
-        x_base = offset_x + columnas * tam_celda + 40
+        x_base = offset_x + columnas * tam_celda + 40  # Puedes ajustar el 40 para acercarlo más o menos
         y_base = 30
         titulo_panel = fuente.render("Palabras a encontrar:", True, negro)
         screen.blit(titulo_panel, (x_base, y_base))
@@ -175,7 +174,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
                     texto = fuente.render(palabra, True, verde)
                 else:
                     texto = fuente.render(f"{palabra[0]} {'-' * (longitud - 1)}", True, negro)
-                screen.blit(texto, (x_base + 20, y_base + 5))
+                screen.blit(texto, (x_base + 20, y_base+5))
                 y_base += 30
             y_base += 20
 
@@ -191,16 +190,13 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
 
     def menu_inicio():
         screen.blit(fondo, (0, 0))
-        fuente_titulo = pygame.font.Font('PressStart2P-Regular.ttf', 24)
-        fuente_subtitulo = pygame.font.Font('PressStart2P-Regular.ttf', 16)
-        fuente_instrucciones = pygame.font.Font('PressStart2P-Regular.ttf', 14)
-
+        fuente = pygame.font.Font('letras/letraproyecto.ttf', 20)
         # Título principal
-        titulo = fuente_titulo.render("LETRAS", True, negro)
+        titulo = fuente.render("LETRAS", True, negro)
         screen.blit(titulo, (width // 2 - titulo.get_width() // 2, 100))
 
         # Subtítulo
-        subtitulo = fuente_subtitulo.render(f"Encuentra las {NUM_PALABRAS} palabras ocultas", True, negro)
+        subtitulo = fuente.render(f"Encuentra las {NUM_PALABRAS} palabras ocultas", True, negro)
         screen.blit(subtitulo, (width // 2 - subtitulo.get_width() // 2, 160))
 
         # Instrucciones
@@ -213,40 +209,36 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
             "No todas las palabras formadas serán válidas",
             "Solo cuentan las palabras propuestas"
         ]
-
         y_pos = 220
         for linea in instrucciones:
-            texto = fuente_instrucciones.render(linea, True, negro)
+            texto = fuente.render(linea, True, negro)
             screen.blit(texto, (width // 2 - texto.get_width() // 2, y_pos))
             y_pos += 30
 
         # Mensaje para comenzar
-        mensaje_inicio = fuente_subtitulo.render("Presiona cualquier tecla para comenzar", True, negro)
+        mensaje_inicio = fuente.render("Presiona cualquier tecla para comenzar", True, negro)
         screen.blit(mensaje_inicio, (width // 2 - mensaje_inicio.get_width() // 2, y_pos + 50))
 
         pygame.display.flip()
-
         esperando = True
         while esperando:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
                     return False
-                elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                elif event.type == pygame.KEYDOWN:
                     esperando = False
         return True
 
     def pantalla_fin():
         screen.blit(fondo, (0, 0))
         tiempo_final = int(time.time() - inicio_tiempo)
-        fuente = pygame.font.Font('PressStart2P-Regular.ttf', 20)
-        fuentetitulo = pygame.font.Font('PressStart2P-Regular.ttf', 50)
-        mensaje = fuentetitulo.render("¡FELICIDADES!", True, verde)
+        fuente = pygame.font.Font('letras/letraproyecto.ttf', 20)
+        mensaje = fuente.render("¡FELICIDADES!", True, verde)
         subtitulo = fuente.render("Encontraste todas las palabras", True, negro)
         tiempo = fuente.render(f"Tiempo total: {tiempo_final} segundos", True, negro)
         instruccion = fuente.render("Presiona cualquier tecla para salir", True, negro)
 
-        screen.blit(mensaje, (width // 2 - mensaje.get_width() // 2, length // 2 - 100))
+        screen.blit(mensaje, (width // 2 - mensaje.get_width() // 2, length // 2 - 80))
         screen.blit(subtitulo, (width // 2 - subtitulo.get_width() // 2, length // 2 - 40))
         screen.blit(tiempo, (width // 2 - tiempo.get_width() // 2, length // 2))
         screen.blit(instruccion, (width // 2 - instruccion.get_width() // 2, length // 2 + 60))
@@ -301,11 +293,6 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
     try:
         matriz, rutas_palabras = generar_sopa_serpiente_superpuesta(palabras, NUM_PALABRAS)
         PALABRAS = list(rutas_palabras.keys())
-        # Mostrar palabras seleccionadas en la consola
-        print("\nPALABRAS SELECCIONADAS PARA ENCONTRAR:")
-        for i, palabra in enumerate(PALABRAS, 1):
-            print(f"{i}. {palabra}")
-        print("\n")
     except Exception as e:
         print(f"Error al generar la sopa de letras: {e}")
         pygame.quit()
@@ -330,16 +317,10 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
                 if event.key == pygame.K_RETURN:
                     palabra_actual = "".join([matriz[i][j] for i, j in seleccionadas])
                     if son_adyacentes(seleccionadas):
-                        palabra_valida = False
                         for palabra, ruta in rutas_palabras.items():
                             if palabra_actual == palabra and palabra not in palabras_encontradas:
                                 palabras_encontradas.append(palabra)
-                                palabra_valida = True
                                 break
-
-                        if not palabra_valida and len(seleccionadas) > 1:
-                            mensaje_error = "PALABRA NO VALIDA"
-                            tiempo_error = time.time()
                     seleccionadas = []
                 elif event.key == pygame.K_BACKSPACE:
                     if seleccionadas:
@@ -353,7 +334,4 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65, usuario=
 
         clock.tick(30)
 
-    pygame.quit()
-
-
-jugar_sopa_letras()
+    return
