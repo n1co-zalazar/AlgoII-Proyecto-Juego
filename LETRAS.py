@@ -102,7 +102,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
                 if matriz[i][j] == " ":
                     matriz[i][j] = random.choice(letras)
 
-    def dibujar(matriz, seleccionadas):
+    def dibujar(matriz, seleccionadas, resolver=False):
         fuente = pygame.font.Font('letras/PressStart2P-Regular.ttf', 20)
         screen.blit(fondo, (0, 0))
         screen.blit(reloj, (17,60))
@@ -166,7 +166,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
             y_base += 30
 
             for palabra in palabras_por_longitud[longitud]:
-                if palabra in palabras_encontradas:
+                if palabra in palabras_encontradas or resolver:  # Cambio clave aquí
                     texto = fuente.render(palabra, True, verde)
                 else:
                     texto = fuente.render(f"{palabra[0]} {'-' * (longitud - 1)}", True, negro)
@@ -360,7 +360,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
 
         corriendo = True
         while corriendo:
-            boton_resolver = dibujar(matriz, seleccionadas)
+            boton_resolver = dibujar(matriz, seleccionadas, resolver=False)
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -368,7 +368,16 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if boton_resolver.collidepoint(event.pos):
+                        # Mostrar todas las palabras encontradas primero
                         palabras_encontradas = list(PALABRAS)
+                        
+                        # Dibujar la pantalla con todas las palabras en verde
+                        for _ in range(30):  # Mostrar durante aproximadamente 1 segundo (30 frames)
+                            dibujar(matriz, seleccionadas, resolver=True)
+                            pygame.display.flip()
+                            pygame.time.delay(33)  # ~30 FPS
+                            
+                        # Luego ir a la pantalla final
                         resultado = pantalla_fin()
                         if resultado == "salir":
                             pygame.quit()
@@ -384,7 +393,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
                             seleccionadas.append(celda)
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        palabra_actual = "".join([matriz[i][j] for i, j in seleccionadas])
+                        palabra_actual = "".join(matriz[i][j] for i, j in seleccionadas)
                         if son_adyacentes(seleccionadas):
                             for palabra, ruta in rutas_palabras.items():
                                 if palabra_actual == palabra and palabra not in palabras_encontradas:
@@ -396,6 +405,12 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
                             seleccionadas.pop()
 
             if len(palabras_encontradas) == len(PALABRAS):
+                # Mostrar todas las palabras encontradas primero
+                for _ in range(30):  # Mostrar durante aproximadamente 1 segundo (30 frames)
+                    dibujar(matriz, seleccionadas, resolver=True)
+                    pygame.display.flip()
+                    pygame.time.delay(33)  # ~30 FPS
+                
                 resultado = pantalla_fin()
                 if resultado == "salir":
                     pygame.quit()

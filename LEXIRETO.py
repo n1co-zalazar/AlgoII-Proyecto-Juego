@@ -19,12 +19,12 @@ NARANJA = const.naranja
 VERDE = const.verde
 
 scroll_offset = 0
-FUENTE = pygame.font.Font("PressStart2P-Regular.ttf", 24)
-FUENTE_BOTON = pygame.font.Font("PressStart2P-Regular.ttf", 15)
-FUENTE_TIEMPO = pygame.font.Font("PressStart2P-Regular.ttf", 30)
+FUENTE = pygame.font.Font("letras/PressStart2P-Regular.ttf", 24)
+FUENTE_BOTON = pygame.font.Font("letras/PressStart2P-Regular.ttf", 15)
+FUENTE_TIEMPO = pygame.font.Font("letras/PressStart2P-Regular.ttf", 30)
 
 ventana = pygame.display.set_mode((ANCHO, ALTO))
-fondo = pygame.image.load("fondo3.png").convert()
+fondo = pygame.image.load("imágenes/fondo3.png").convert()
 fondo = pygame.transform.scale(fondo, (ANCHO, ALTO))
 pygame.display.set_caption("Lexireto")
 seleccionados = []

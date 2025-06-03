@@ -94,4 +94,3 @@ class Juego:
         titulo = fuente_titulo.render(nombrejuego, True, colortitulo)
         self.ventana.blit(titulo, posiciontitulo)
 
-
