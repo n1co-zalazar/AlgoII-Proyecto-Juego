@@ -3,7 +3,7 @@ import random
 import sys
 import time
 from collections import defaultdict
-from const2 import*
+from const2 import *
 
 
 def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
@@ -14,7 +14,6 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
     MARGEN_DERECHO = 400
     MARGEN_INFERIOR = 150
     DIRECCIONES = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
 
     # Cargar palabras si no se proporcionan
     def cargar_palabras_desde_archivo(nombre_archivo):
@@ -40,7 +39,6 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
     fondo = pygame.transform.scale(fondo, (width, length))
     reloj = pygame.image.load("imágenes/time.png").convert()
     reloj = pygame.transform.scale(reloj, (140, 130))
-
 
     # Configurar márgenes y calcular tamaño de celda dinámico
     MARGEN_DERECHO = 400
@@ -105,8 +103,8 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
                     matriz[i][j] = random.choice(letras)
 
     def dibujar(matriz, seleccionadas):
-        fuente = pygame.font.Font('letras/letraproyecto.ttf', 20)
-        screen.blit(fondo, (0, 0))  # En vez de screen.fill(blanco)
+        fuente = pygame.font.Font('letras/PressStart2P-Regular.ttf', 20)
+        screen.blit(fondo, (0, 0))
         screen.blit(reloj, (17,60))
 
         # Dibujar matriz
@@ -138,15 +136,13 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
         segundos = tiempo_total % 60
         tiempo_formateado = f"{horas:01}:{minutos:02}:{segundos:02}"
 
-        fuente = pygame.font.Font('letras/letraproyecto.ttf', 20)
+        fuente = pygame.font.Font('letras/PressStart2P-Regular.ttf', 20)
         texto_tiempo = fuente.render(f"WARNING",
                                      True, rojo)
 
-        fuente_time = pygame.font.Font('letras/letraproyecto.ttf', 10)
-
+        fuente_time = pygame.font.Font('letras/PressStart2P-Regular.ttf', 10)
 
         numero_tiempo = fuente_time.render(str(tiempo_formateado), True, negro)
-
         screen.blit(numero_tiempo, (48,130 ))
 
         texto_encontradas=fuente.render(f"Encontradas: {len(palabras_encontradas)}/{len(PALABRAS)}",True,negro)
@@ -154,7 +150,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
         screen.blit(texto_encontradas, (850,length - 80))
 
         # Panel de palabras
-        x_base = offset_x + columnas * tam_celda + 40  # Puedes ajustar el 40 para acercarlo más o menos
+        x_base = offset_x + columnas * tam_celda + 40
         y_base = 30
         titulo_panel = fuente.render("Palabras a encontrar:", True, negro)
         screen.blit(titulo_panel, (x_base, y_base))
@@ -178,7 +174,22 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
                 y_base += 30
             y_base += 20
 
+        # Dibujar botón Resolver con efecto hover
+        mouse_pos = pygame.mouse.get_pos()
+        boton_resolver = pygame.Rect(12, length - 550, 170, 45)
+        hover_resolver = boton_resolver.collidepoint(mouse_pos)
+        
+        # Color del botón (gris claro cuando está el mouse encima)
+        color_boton = (200, 200, 200) if hover_resolver else blanco
+        pygame.draw.rect(screen, color_boton, boton_resolver)
+        pygame.draw.rect(screen, negro, boton_resolver, 2)
+
+        texto_resolver = fuente.render("Resolver", True, negro)
+        screen.blit(texto_resolver, (boton_resolver.centerx - texto_resolver.get_width() // 2, 
+                                   boton_resolver.centery - texto_resolver.get_height() // 2))
+
         pygame.display.flip()
+        return boton_resolver
 
     def obtener_celda(pos):
         x, y = pos
@@ -190,7 +201,7 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
 
     def menu_inicio():
         screen.blit(fondo, (0, 0))
-        fuente = pygame.font.Font('letras/letraproyecto.ttf', 20)
+        fuente = pygame.font.Font('letras/PressStart2P-Regular.ttf', 20)
         # Título principal
         titulo = fuente.render("LETRAS", True, negro)
         screen.blit(titulo, (width // 2 - titulo.get_width() // 2, 100))
@@ -232,26 +243,68 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
     def pantalla_fin():
         screen.blit(fondo, (0, 0))
         tiempo_final = int(time.time() - inicio_tiempo)
-        fuente = pygame.font.Font('letras/letraproyecto.ttf', 20)
-        mensaje = fuente.render("¡FELICIDADES!", True, verde)
-        subtitulo = fuente.render("Encontraste todas las palabras", True, negro)
-        tiempo = fuente.render(f"Tiempo total: {tiempo_final} segundos", True, negro)
-        instruccion = fuente.render("Presiona cualquier tecla para salir", True, negro)
+        fuente_grande = pygame.font.Font('letras/PressStart2P-Regular.ttf', 30)
+        fuente_mediana = pygame.font.Font('letras/PressStart2P-Regular.ttf', 20)
+        fuente_pequena = pygame.font.Font('letras/PressStart2P-Regular.ttf', 16)
 
-        screen.blit(mensaje, (width // 2 - mensaje.get_width() // 2, length // 2 - 80))
-        screen.blit(subtitulo, (width // 2 - subtitulo.get_width() // 2, length // 2 - 40))
-        screen.blit(tiempo, (width // 2 - tiempo.get_width() // 2, length // 2))
-        screen.blit(instruccion, (width // 2 - instruccion.get_width() // 2, length // 2 + 60))
+        mensaje = fuente_grande.render("¡FELICIDADES!", True, verde)
+        subtitulo = fuente_mediana.render("Encontraste todas las palabras", True, negro)
+        tiempo = fuente_mediana.render(f"Tiempo total: {tiempo_final} segundos", True, negro)
+        instruccion = fuente_pequena.render("¿Quieres volver a jugar?", True, negro)
 
-        pygame.display.flip()
+        # Posiciones de los textos
+        screen.blit(mensaje, (width // 2 - mensaje.get_width() // 2, length // 2 - 120))
+        screen.blit(subtitulo, (width // 2 - subtitulo.get_width() // 2, length // 2 - 70))
+        screen.blit(tiempo, (width // 2 - tiempo.get_width() // 2, length // 2 - 30))
+        screen.blit(instruccion, (width // 2 - instruccion.get_width() // 2, length // 2 + 20))
+
+        # Crear botones
+        boton_si = pygame.Rect(width // 2 - 150, length // 2 + 60, 120, 50)
+        boton_no = pygame.Rect(width // 2 + 30, length // 2 + 60, 120, 50)
+
         esperando = True
         while esperando:
+            mouse_pos = pygame.mouse.get_pos()
+            hover_si = boton_si.collidepoint(mouse_pos)
+            hover_no = boton_no.collidepoint(mouse_pos)
+
+            # Dibujar fondo nuevamente para limpiar los botones anteriores
+            screen.blit(fondo, (0, 0))
+            # Volver a dibujar todos los elementos estáticos
+            screen.blit(mensaje, (width // 2 - mensaje.get_width() // 2, length // 2 - 120))
+            screen.blit(subtitulo, (width // 2 - subtitulo.get_width() // 2, length // 2 - 70))
+            screen.blit(tiempo, (width // 2 - tiempo.get_width() // 2, length // 2 - 30))
+            screen.blit(instruccion, (width // 2 - instruccion.get_width() // 2, length // 2 + 20))
+
+            # Dibujar botones con efecto hover actualizado
+            color_boton_si = (200, 200, 200) if hover_si else blanco
+            color_boton_no = (200, 200, 200) if hover_no else blanco
+
+            pygame.draw.rect(screen, color_boton_si, boton_si)
+            pygame.draw.rect(screen, negro, boton_si, 2)
+            pygame.draw.rect(screen, color_boton_no, boton_no)
+            pygame.draw.rect(screen, negro, boton_no, 2)
+
+            texto_si = fuente_pequena.render("Sí", True, negro)
+            texto_no = fuente_pequena.render("No", True, negro)
+
+            screen.blit(texto_si, (boton_si.centerx - texto_si.get_width() // 2, 
+                                boton_si.centery - texto_si.get_height() // 2))
+            screen.blit(texto_no, (boton_no.centerx - texto_no.get_width() // 2, 
+                                boton_no.centery - texto_no.get_height() // 2))
+
+            pygame.display.flip()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
-                elif event.type == pygame.KEYDOWN:
-                    esperando = False
+                    return "salir"
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if boton_si.collidepoint(mouse_pos):
+                        return "reiniciar"
+                    elif boton_no.collidepoint(mouse_pos):
+                        return "salir"
+
+            clock.tick(30)
 
     def generar_sopa_serpiente_superpuesta(lista_palabras, cantidad_objetivo):
         matriz = crear_matriz(filas, columnas)
@@ -286,52 +339,71 @@ def jugar_sopa_letras(palabras=None, filas=7, columnas=7, tam_celda=65):
                 return False
         return True
 
-    # Iniciar el juego
-    if not menu_inicio():
-        return
+    # Bucle principal del juego
+    while True:
+        # Iniciar el juego
+        if not menu_inicio():
+            pygame.quit()
+            sys.exit()
 
-    try:
-        matriz, rutas_palabras = generar_sopa_serpiente_superpuesta(palabras, NUM_PALABRAS)
-        PALABRAS = list(rutas_palabras.keys())
-    except Exception as e:
-        print(f"Error al generar la sopa de letras: {e}")
-        pygame.quit()
-        return
+        try:
+            matriz, rutas_palabras = generar_sopa_serpiente_superpuesta(palabras, NUM_PALABRAS)
+            PALABRAS = list(rutas_palabras.keys())
+        except Exception as e:
+            print(f"Error al generar la sopa de letras: {e}")
+            pygame.quit()
+            sys.exit()
 
-    seleccionadas = []
-    palabras_encontradas = []
-    inicio_tiempo = time.time()
+        seleccionadas = []
+        palabras_encontradas = []
+        inicio_tiempo = time.time()
 
-    corriendo = True
-    while corriendo:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                corriendo = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                celda = obtener_celda(pygame.mouse.get_pos())
-                if celda and celda not in seleccionadas:
-                    if not seleccionadas or any(
-                            abs(celda[0] - f) + abs(celda[1] - c) == 1 for f, c in [seleccionadas[-1]]):
-                        seleccionadas.append(celda)
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    palabra_actual = "".join([matriz[i][j] for i, j in seleccionadas])
-                    if son_adyacentes(seleccionadas):
-                        for palabra, ruta in rutas_palabras.items():
-                            if palabra_actual == palabra and palabra not in palabras_encontradas:
-                                palabras_encontradas.append(palabra)
-                                break
-                    seleccionadas = []
-                elif event.key == pygame.K_BACKSPACE:
-                    if seleccionadas:
-                        seleccionadas.pop()
+        corriendo = True
+        while corriendo:
+            boton_resolver = dibujar(matriz, seleccionadas)
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if boton_resolver.collidepoint(event.pos):
+                        palabras_encontradas = list(PALABRAS)
+                        resultado = pantalla_fin()
+                        if resultado == "salir":
+                            pygame.quit()
+                            sys.exit()
+                        else:
+                            corriendo = False
+                            break
+                    
+                    celda = obtener_celda(pygame.mouse.get_pos())
+                    if celda and celda not in seleccionadas:
+                        if not seleccionadas or any(
+                                abs(celda[0] - f) + abs(celda[1] - c) == 1 for f, c in [seleccionadas[-1]]):
+                            seleccionadas.append(celda)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        palabra_actual = "".join([matriz[i][j] for i, j in seleccionadas])
+                        if son_adyacentes(seleccionadas):
+                            for palabra, ruta in rutas_palabras.items():
+                                if palabra_actual == palabra and palabra not in palabras_encontradas:
+                                    palabras_encontradas.append(palabra)
+                                    break
+                        seleccionadas = []
+                    elif event.key == pygame.K_BACKSPACE:
+                        if seleccionadas:
+                            seleccionadas.pop()
 
-        dibujar(matriz, seleccionadas)
+            if len(palabras_encontradas) == len(PALABRAS):
+                resultado = pantalla_fin()
+                if resultado == "salir":
+                    pygame.quit()
+                    sys.exit()
+                else:
+                    corriendo = False
+                    continue
 
-        if len(palabras_encontradas) == len(PALABRAS):
-            pantalla_fin()
-            corriendo = False
+            clock.tick(30)
 
-        clock.tick(30)
-
-    return
+jugar_sopa_letras()
